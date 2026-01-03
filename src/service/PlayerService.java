@@ -1,5 +1,7 @@
 package service;
-
+import service.AuthService;
+import repository.DataManager;
+import exception.EmptyQueueException;
 import model.Audio;
 import exception.EmptyQueueException;
 
@@ -39,7 +41,15 @@ public class PlayerService {
             currentAudio = playQueue.pollFirst();
         }
         isPlaying = true;
-        currentAudio.play(); // پلی‌مورفیسم در عمل!
+        currentAudio.play();
+
+
+        AuthService auth = AuthService.getInstance();
+        auth.addEarningsToArtist(currentAudio.getArtist(), 0.5);
+
+        // لاگ تراکنش
+        repository.DataManager.logTransaction(currentAudio.getArtist(), "PlayEarning", 0.5);
+        // پلی‌مورفیسم در عمل!
 
         // درآمد آرتیست: هر پلی ۰.۵ دلار (بعداً کامل‌تر می‌کنیم)
         // TODO: add earnings
